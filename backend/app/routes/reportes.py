@@ -3,6 +3,21 @@ from app.db import execute_query
 
 reportes_bp = Blueprint('reportes', __name__)
 
+def convert_timedelta_to_string(data):
+    """Convierte objetos timedelta a strings HH:MM:SS"""
+    if isinstance(data, list):
+        return [convert_timedelta_to_string(item) for item in data]
+    elif isinstance(data, dict):
+        return {key: convert_timedelta_to_string(value) for key, value in data.items()}
+    elif hasattr(data, 'total_seconds'):  # Es un timedelta
+        total_seconds = int(data.total_seconds())
+        hours = total_seconds // 3600
+        minutes = (total_seconds % 3600) // 60
+        seconds = total_seconds % 60
+        return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+    else:
+        return data
+
 # GET salas más reservadas
 @reportes_bp.route('/salas-mas-reservadas', methods=['GET'])
 def salas_mas_reservadas():
@@ -15,7 +30,7 @@ def salas_mas_reservadas():
         LIMIT 10
     """
     results = execute_query(query)
-    return jsonify(results)
+    return jsonify(convert_timedelta_to_string(results))
 
 # GET turnos más demandados
 @reportes_bp.route('/turnos-mas-demandados', methods=['GET'])
@@ -24,12 +39,15 @@ def turnos_mas_demandados():
     Retorna los turnos más demandados usando la vista v_turnos_mas_demandados
     """
     query = """
-        SELECT id_turno, hora_inicio, hora_fin, total
+        SELECT id_turno, 
+               TIME_FORMAT(hora_inicio, '%H:%i:%s') as hora_inicio,
+               TIME_FORMAT(hora_fin, '%H:%i:%s') as hora_fin,
+               total
         FROM v_turnos_mas_demandados
         LIMIT 10
     """
     results = execute_query(query)
-    return jsonify(results)
+    return jsonify(convert_timedelta_to_string(results))
 
 # GET promedio de participantes por sala
 @reportes_bp.route('/promedio-participantes', methods=['GET'])
@@ -43,7 +61,7 @@ def promedio_participantes():
         ORDER BY promedio_participantes DESC
     """
     results = execute_query(query)
-    return jsonify(results)
+    return jsonify(convert_timedelta_to_string(results))
 
 # GET estadísticas generales
 @reportes_bp.route('/estadisticas', methods=['GET'])
@@ -119,7 +137,7 @@ def reservas_por_fecha():
     query += " GROUP BY fecha ORDER BY fecha DESC"
     
     results = execute_query(query, tuple(params) if params else None)
-    return jsonify(results)
+    return jsonify(convert_timedelta_to_string(results))
 
 # GET uso de salas por tipo
 @reportes_bp.route('/uso-por-tipo-sala', methods=['GET'])
@@ -135,7 +153,7 @@ def uso_por_tipo_sala():
         GROUP BY s.tipo_sala
     """
     results = execute_query(query)
-    return jsonify(results)
+    return jsonify(convert_timedelta_to_string(results))
 
 # GET participantes más activos
 @reportes_bp.route('/participantes-mas-activos', methods=['GET'])
@@ -155,7 +173,7 @@ def participantes_mas_activos():
         LIMIT 10
     """
     results = execute_query(query)
-    return jsonify(results)
+    return jsonify(convert_timedelta_to_string(results))
 
 # ============== REPORTES REQUERIDOS POR EL OBLIGATORIO ==============
 
@@ -179,7 +197,7 @@ def reservas_por_carrera():
         ORDER BY total_reservas DESC
     """
     results = execute_query(query)
-    return jsonify(results)
+    return jsonify(convert_timedelta_to_string(results))
 
 # GET porcentaje de ocupación de salas por edificio
 @reportes_bp.route('/ocupacion-por-edificio', methods=['GET'])
@@ -225,7 +243,7 @@ def ocupacion_por_edificio():
     
     params = (fecha_fin, fecha_inicio, fecha_fin, fecha_inicio, fecha_inicio, fecha_fin)
     results = execute_query(query, params)
-    return jsonify(results)
+    return jsonify(convert_timedelta_to_string(results))
 
 # GET reservas y asistencias por tipo de participante
 @reportes_bp.route('/reservas-por-tipo-participante', methods=['GET'])
@@ -248,7 +266,7 @@ def reservas_por_tipo_participante():
         ORDER BY total_reservas DESC
     """
     results = execute_query(query)
-    return jsonify(results)
+    return jsonify(convert_timedelta_to_string(results))
 
 # GET sanciones por tipo de participante
 @reportes_bp.route('/sanciones-por-tipo-participante', methods=['GET'])
@@ -273,7 +291,7 @@ def sanciones_por_tipo_participante():
         ORDER BY total_sanciones DESC
     """
     results = execute_query(query)
-    return jsonify(results)
+    return jsonify(convert_timedelta_to_string(results))
 
 # GET porcentaje de reservas utilizadas vs canceladas
 @reportes_bp.route('/efectividad-reservas', methods=['GET'])
@@ -298,7 +316,7 @@ def efectividad_reservas():
         FROM reserva
     """
     results = execute_query(query)
-    return jsonify(results[0] if results else {})
+    return jsonify(convert_timedelta_to_string(results[0] if results else {}))
 
 # ============== 3 CONSULTAS ADICIONALES PROPIAS ==============
 
@@ -323,7 +341,7 @@ def ranking_edificios():
         ORDER BY reservas_por_sala DESC
     """
     results = execute_query(query)
-    return jsonify(results)
+    return jsonify(convert_timedelta_to_string(results))
 
 # GET análisis de horarios pico
 @reportes_bp.route('/horarios-pico', methods=['GET'])
@@ -334,8 +352,8 @@ def horarios_pico():
     query = """
         SELECT 
             DAYNAME(r.fecha) as dia_semana,
-            t.hora_inicio,
-            t.hora_fin,
+            TIME_FORMAT(t.hora_inicio, '%H:%i:%s') as hora_inicio,
+            TIME_FORMAT(t.hora_fin, '%H:%i:%s') as hora_fin,
             COUNT(*) as total_reservas,
             COUNT(DISTINCT r.id_sala) as salas_diferentes
         FROM reserva r
@@ -346,7 +364,7 @@ def horarios_pico():
         LIMIT 20
     """
     results = execute_query(query)
-    return jsonify(results)
+    return jsonify(convert_timedelta_to_string(results))
 
 # GET predicción de disponibilidad
 @reportes_bp.route('/prediccion-disponibilidad', methods=['GET'])
@@ -361,8 +379,8 @@ def prediccion_disponibilidad():
         SELECT 
             s.nombre_sala,
             e.nombre_edificio,
-            t.hora_inicio,
-            t.hora_fin,
+            TIME_FORMAT(t.hora_inicio, '%H:%i:%s') as hora_inicio,
+            TIME_FORMAT(t.hora_fin, '%H:%i:%s') as hora_fin,
             COUNT(*) as veces_reservada_historico,
             ROUND((1 - COUNT(*) / (
                 SELECT COUNT(DISTINCT fecha) 
@@ -380,4 +398,4 @@ def prediccion_disponibilidad():
         LIMIT 30
     """
     results = execute_query(query, (dia_semana, dia_semana))
-    return jsonify(results)
+    return jsonify(convert_timedelta_to_string(results))
