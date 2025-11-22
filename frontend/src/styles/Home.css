@@ -1,0 +1,344 @@
+/* === Reset y base === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  background-color: #eef1f5;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* === Contenedor principal === */
+.home-container {
+  display: flex;
+  flex-direction: row;
+  min-height: 100vh;
+  width: 100vw;
+  overflow-x: hidden;
+}
+
+/* === Sidebar izquierdo === */
+.sidebar {
+  background: linear-gradient(180deg, #0b3760 0%, #082947 100%);
+  width: 440px;
+  min-width: 440px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.clock-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.clock-icon {
+  width: 280px;
+  height: 280px;
+  object-fit: contain;
+  filter: brightness(0.95);
+  animation: pulse 3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}
+
+/* === Contenido principal === */
+.content {
+  flex: 1;
+  background-color: #f2f5fa;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* === Sección principal === */
+.main-section {
+  flex: 1;
+  padding: 40px 60px;
+  padding-top: 100px; /* Espacio para el navbar fijo */
+}
+
+/* === Título principal === */
+.title {
+  color: #0b3760;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 40px;
+  letter-spacing: -0.5px;
+}
+
+/* === Sección de recursos === */
+.resources-section {
+  display: flex;
+  gap: 60px;
+  align-items: flex-start;
+  position: relative;
+}
+
+.resources-content {
+  flex: 1;
+}
+
+.resources-title {
+  color: #0b3760;
+  font-size: 48px;
+  font-weight: 800;
+  margin-bottom: 30px;
+  letter-spacing: -1px;
+}
+
+/* === Grid de botones === */
+.resource-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  max-width: 700px;
+}
+
+.resource-button {
+  background: linear-gradient(135deg, #0b3760 0%, #094a7a 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 24px 20px;
+  min-height: 90px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(11, 55, 96, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.resource-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.resource-button:hover::before {
+  left: 100%;
+}
+
+.resource-button:hover {
+  background: linear-gradient(135deg, #094a7a 0%, #0b3760 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(11, 55, 96, 0.35);
+}
+
+.resource-button:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(11, 55, 96, 0.3);
+}
+
+/* === Imagen decorativa === */
+.decorative-image-container {
+  position: sticky;
+  top: 120px;
+  align-self: flex-start;
+}
+
+.decorative-image {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 10px 40px rgba(11, 55, 96, 0.25);
+  border: 8px solid rgba(255, 255, 255, 0.8);
+  transition: transform 0.3s ease;
+}
+
+.decorative-image:hover {
+  transform: scale(1.05) rotate(5deg);
+}
+
+/* === Responsive === */
+@media (max-width: 1400px) {
+  .decorative-image-container {
+    display: none;
+  }
+  
+  .resources-section {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 320px;
+    min-width: 320px;
+  }
+  
+  .clock-icon {
+    width: 200px;
+    height: 200px;
+  }
+  
+  .main-section {
+    padding: 30px 40px;
+    padding-top: 100px;
+  }
+  
+  .title {
+    font-size: 28px;
+  }
+  
+  .resources-title {
+    font-size: 40px;
+  }
+  
+  .resource-grid {
+    gap: 20px;
+  }
+  
+  .resource-button {
+    font-size: 16px;
+    min-height: 80px;
+    padding: 20px 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .home-container {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    min-width: 100%;
+    min-height: 200px;
+    padding: 30px;
+  }
+  
+  .clock-icon {
+    width: 150px;
+    height: 150px;
+  }
+  
+  .main-section {
+    padding: 20px;
+    padding-top: 90px;
+  }
+  
+  .title {
+    font-size: 24px;
+    margin-bottom: 30px;
+  }
+  
+  .resources-title {
+    font-size: 36px;
+    margin-bottom: 20px;
+  }
+  
+  .resource-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .resource-button {
+    font-size: 16px;
+    min-height: 70px;
+  }
+}
+
+/* === Páginas generales === */
+.page {
+  min-height: 100vh;
+  padding: 100px 60px 40px;
+  background-color: #f2f5fa;
+}
+
+.page h2 {
+  color: #0b3760;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 30px;
+}
+
+.page h3 {
+  color: #0b3760;
+  font-size: 24px;
+  font-weight: 600;
+  margin-top: 30px;
+  margin-bottom: 15px;
+}
+
+.page p,
+.page li {
+  color: #333;
+  font-size: 16px;
+  line-height: 1.8;
+  margin-bottom: 12px;
+}
+
+.page ul {
+  padding-left: 30px;
+}
+
+.page table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.page th {
+  background-color: #0b3760;
+  color: white;
+  padding: 15px;
+  text-align: left;
+  font-weight: 600;
+}
+
+.page td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.page tr:hover {
+  background-color: #f8f9fa;
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 90px 20px 30px;
+  }
+  
+  .page h2 {
+    font-size: 26px;
+  }
+  
+  .page h3 {
+    font-size: 20px;
+  }
+}

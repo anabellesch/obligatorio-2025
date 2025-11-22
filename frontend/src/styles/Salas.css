@@ -1,0 +1,327 @@
+.page-container {
+  min-height: 100vh;
+  background-color: #f2f5fa;
+}
+
+.salas-page {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 16px;
+  margin-bottom: 30px;
+}
+
+/* === Filtros === */
+.filtros-container {
+  display: flex;
+  gap: 20px;
+  align-items: flex-end;
+  margin-bottom: 40px;
+  padding: 30px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.filtro-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.filtro-group label {
+  color: #0b3760;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.input-filtro {
+  padding: 12px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  background-color: #fafafa;
+}
+
+.input-filtro:focus {
+  outline: none;
+  border-color: #0b3760;
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(11, 55, 96, 0.1);
+}
+
+.btn-buscar {
+  padding: 12px 32px;
+  background: linear-gradient(135deg, #0b3760 0%, #094a7a 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 140px;
+  box-shadow: 0 4px 12px rgba(11, 55, 96, 0.2);
+}
+
+.btn-buscar:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(11, 55, 96, 0.3);
+}
+
+.btn-buscar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* === Mensajes === */
+.error-message {
+  padding: 16px;
+  background-color: #fee;
+  border-left: 4px solid #c00;
+  color: #c00;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.success-message {
+  padding: 16px;
+  background-color: #efe;
+  border-left: 4px solid #0c0;
+  color: #060;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+/* === Resultados === */
+.resultados-container {
+  margin-top: 30px;
+}
+
+.resultados-container h3 {
+  color: #0b3760;
+  font-size: 20px;
+  margin-bottom: 25px;
+  font-weight: 600;
+}
+
+/* === Grid de salas === */
+.salas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 24px;
+  margin-top: 20px;
+}
+
+.sala-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.sala-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border-color: #0b3760;
+}
+
+.sala-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.sala-header h4 {
+  color: #0b3760;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.tipo-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.tipo-libre {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.tipo-posgrado {
+  background-color: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.tipo-docente {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+.sala-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.info-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.info-item .icon {
+  font-size: 20px;
+  min-width: 24px;
+}
+
+.info-item strong {
+  color: #0b3760;
+  font-size: 14px;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.info-item p {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.btn-reservar {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #0b3760 0%, #094a7a 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-reservar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(11, 55, 96, 0.3);
+}
+
+/* === Tabla (para página de ubicación) === */
+.table-container {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background-color: #0b3760;
+}
+
+th {
+  color: white;
+  padding: 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 15px;
+}
+
+tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+  .filtros-container {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 20px;
+  }
+
+  .btn-buscar {
+    width: 100%;
+  }
+
+  .salas-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sala-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .tipo-badge {
+    align-self: flex-start;
+  }
+
+  .table-container {
+    padding: 16px;
+  }
+
+  table {
+    font-size: 14px;
+  }
+
+  th,
+  td {
+    padding: 10px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .filtro-group label {
+    font-size: 13px;
+  }
+
+  .input-filtro {
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+
+  .sala-card {
+    padding: 20px;
+  }
+
+  .sala-header h4 {
+    font-size: 18px;
+  }
+}
