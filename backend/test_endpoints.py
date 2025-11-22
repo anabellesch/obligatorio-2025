@@ -3,7 +3,7 @@ import requests
 BASE = "http://localhost:5000/api"
 
 endpoints = [
-    "/auth",
+    "/auth/login",
     "/participantes",
     "/salas",
     "/reservas",

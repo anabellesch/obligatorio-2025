@@ -11,12 +11,13 @@ services:
     environment:
       - FLASK_ENV=development
       - DB_HOST=db
-      - DB_USER=admin
-      - DB_PASS=admin123
+      - DB_USER=root
+      - DB_PASS=rootpassword
       - DB_NAME=gestion_salas
       - DB_PORT=3306
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   frontend:
     build: ./frontend
@@ -32,13 +33,16 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: gestion_salas
-      MYSQL_USER: admin
-      MYSQL_PASSWORD: admin123
     ports:
       - "3308:3306"
     volumes:
       - mysql-data:/var/lib/mysql
       - ./database/docker-init/:/docker-entrypoint-initdb.d/
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
 
 volumes:
   mysql-data:
