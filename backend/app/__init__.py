@@ -10,6 +10,10 @@ def create_app():
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key')
     app.config['JSON_AS_ASCII'] = False
 
+    # Allow routes to be accessed with or without a trailing slash
+    # This prevents Flask from issuing redirects (which break CORS preflight requests)
+    app.url_map.strict_slashes = False
+
     CORS(app, resources={r"/api/*": {"origins": "*"}})
 
     # Import and register blueprints (use absolute backend.app.routes imports)

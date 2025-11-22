@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
+import { useUser } from "../hooks/useUser";
 import { api } from "../services/api";
 import Navbar from "../components/Navbar";
 import "../styles/Salas.css";
 
 export default function SalasDisponibles() {
+  const { user } = useUser();
   const [fecha, setFecha] = useState("");
   const [idTurno, setIdTurno] = useState("");
   const [turnos, setTurnos] = useState([]);
@@ -19,7 +21,7 @@ export default function SalasDisponibles() {
 
   const loadTurnos = async () => {
     try {
-      const data = await api.get("/api/salas/turnos");
+      const data = await api.get("/salas/turnos");
       setTurnos(data);
     } catch (err) {
       console.error("Error cargando turnos:", err);
@@ -38,7 +40,7 @@ export default function SalasDisponibles() {
     setSearched(true);
 
     try {
-      const data = await api.post("/api/salas/disponibles", {
+      const data = await api.post("/salas/disponibles", {
         fecha,
         id_turno: idTurno
       });
@@ -47,6 +49,37 @@ export default function SalasDisponibles() {
       console.error("Error buscando salas:", err);
       setError("Error al buscar salas disponibles");
       setSalas([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const reservarSala = async (id_sala) => {
+    if (!fecha || !idTurno) {
+      setError("Por favor selecciona una fecha y un turno antes de reservar");
+      return;
+    }
+    setLoading(true);
+    setError("");
+    try {
+      const payload = {
+        id_sala,
+        fecha,
+        id_turno: idTurno,
+        ci_solicitante: user?.ci
+      };
+      const res = await api.post("/reservas/", payload);
+      // actualizar lista de salas disponibles
+      await buscarSalas();
+      alert(res.message || 'Reserva creada');
+    } catch (err) {
+      console.error('Error creando reserva:', err);
+      const msg = err?.message || (err?.error ? err.error : 'No se pudo crear la reserva');
+      if (msg === 'Failed to fetch') {
+        setError('No se pudo conectar al servidor. ¿Está corriendo el backend?');
+      } else {
+        setError(msg);
+      }
     } finally {
       setLoading(false);
     }
@@ -148,7 +181,11 @@ export default function SalasDisponibles() {
                       </div>
                     </div>
 
-                    <button className="btn-reservar">
+                    <button
+                      className="btn-reservar"
+                      onClick={() => reservarSala(sala.id_sala)}
+                      disabled={loading}
+                    >
                       Reservar
                     </button>
                   </div>

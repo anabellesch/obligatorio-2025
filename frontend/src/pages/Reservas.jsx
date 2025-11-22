@@ -25,6 +25,18 @@ export default function Reservas() {
     }
   };
 
+  const cancelarReserva = async (id_reserva) => {
+    if (!confirm('¿Confirma cancelar esta reserva?')) return;
+    try {
+      await api.del(`/reservas/${id_reserva}`);
+      await loadReservas();
+      alert('Reserva cancelada');
+    } catch (err) {
+      console.error('Error cancelando reserva:', err);
+      alert(err.message || 'No se pudo cancelar la reserva');
+    }
+  };
+
   const getEstadoBadgeClass = (estado) => {
     const classes = {
       activa: "estado-activa",
@@ -94,6 +106,7 @@ export default function Reservas() {
                   <th>Turno</th>
                   <th>Estado</th>
                   <th>Fecha Solicitud</th>
+                  <th>Acciones</th>
                 </tr>
               </thead>
               <tbody>
@@ -104,7 +117,30 @@ export default function Reservas() {
                       <strong>Sala {reserva.id_sala}</strong>
                     </td>
                     <td>
-                      {new Date(reserva.fecha).toLocaleDateString('es-UY')}
+                      {(() => {
+                        // reserva.fecha comes as 'YYYY-MM-DD' (no time). Construct as local date
+                        const d = reserva.fecha;
+                        if (!d) return "";
+                        const ymd = /^\d{4}-\d{2}-\d{2}$/.test(d);
+                        if (ymd) {
+                          const [y, m, day] = d.split("-");
+                          return new Date(parseInt(y), parseInt(m) - 1, parseInt(day)).toLocaleDateString('es-UY');
+                        }
+                        // fallback (datetime string like 'Tue, 25 Nov 2025 00:00:00 GMT')
+                        // Use UTC date parts to avoid timezone shifts that show the previous day
+                        const dt = new Date(d);
+                        const y2 = dt.getUTCFullYear();
+                        const m2 = dt.getUTCMonth();
+                        const day2 = dt.getUTCDate();
+                        // Also show raw value for debugging (temporary)
+                        const formatted = new Date(y2, m2, day2).toLocaleDateString('es-UY');
+                        return (
+                          <div>
+                            <div>{formatted}</div>
+                            <small style={{ color: '#666' }}>{String(d)}</small>
+                          </div>
+                        );
+                      })()}
                     </td>
                     <td>Turno {reserva.id_turno}</td>
                     <td>
@@ -113,7 +149,12 @@ export default function Reservas() {
                       </span>
                     </td>
                     <td>
-                      {new Date(reserva.fecha_solicitud).toLocaleDateString('es-UY')}
+                      {reserva.fecha_solicitud ? new Date(reserva.fecha_solicitud).toLocaleString('es-UY') : ''}
+                    </td>
+                    <td>
+                      <button className="btn-cancel" onClick={() => cancelarReserva(reserva.id_reserva)}>
+                        Cancelar
+                      </button>
                     </td>
                   </tr>
                 ))}

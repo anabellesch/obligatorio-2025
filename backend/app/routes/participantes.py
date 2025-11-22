@@ -6,6 +6,7 @@ participantes_bp = Blueprint('participantes', __name__)
 
 # GET todos los participantes
 @participantes_bp.route('/', methods=['GET'])
+@participantes_bp.route('', methods=['GET'])
 def get_participants():
     """Obtiene todos los participantes"""
     try:
@@ -30,8 +31,27 @@ def get_participant(ci):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
+# GET participantes que tienen reservas (distinct)
+@participantes_bp.route('/reservantes', methods=['GET'])
+def get_participants_with_reservas():
+    """Obtiene participantes que tienen al menos una reserva, con conteo de reservas"""
+    try:
+        query = """
+            SELECT p.ci, p.nombre, p.apellido, p.email, COUNT(rp.id_reserva) as reservas_count
+            FROM participante p
+            JOIN reserva_participante rp ON p.ci = rp.ci_participante
+            GROUP BY p.ci, p.nombre, p.apellido, p.email
+            ORDER BY reservas_count DESC, p.apellido, p.nombre
+        """
+        results = execute_query(query)
+        return jsonify(results), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 # POST crear participante
 @participantes_bp.route('/', methods=['POST'])
+@participantes_bp.route('', methods=['POST'])
 def create_participant():
     """Crea un nuevo participante"""
     try:

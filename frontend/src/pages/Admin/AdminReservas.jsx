@@ -13,16 +13,16 @@ export default function AdminReservas() {
     try {
       const s = await api.get("/salas");
       setSalas(s);
-      const t = await api.get("/turnos");
+      const t = await api.get("/salas/turnos");
       setTurnos(t);
-      const r = await api.get("/reservas");
+      const r = await api.get("/reservas/");
       setReservas(r);
     } catch (e) { console.error(e) }
   };
 
   const crearReserva = async () => {
     try {
-      await api.post("/reservas", form);
+      await api.post("/reservas/", form);
       alert("Reserva creada");
       fetchInitial();
     } catch (e) {
