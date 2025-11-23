@@ -22,9 +22,9 @@ export default function UbicacionSalas() {
         </thead>
         <tbody>
           {salas.map((sala) => (
-            <tr key={sala.nombre_sala}>
+            <tr key={sala.id_sala || sala.nombre_sala}>
               <td>{sala.nombre_sala}</td>
-              <td>{sala.edificio}</td>
+              <td>{sala.nombre_edificio || sala.edificio}</td>
               <td>{sala.capacidad}</td>
               <td>{sala.tipo_sala}</td>
             </tr>

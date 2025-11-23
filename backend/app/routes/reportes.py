@@ -40,8 +40,8 @@ def turnos_mas_demandados():
     """
     query = """
         SELECT id_turno, 
-               TIME_FORMAT(hora_inicio, '%H:%i:%s') as hora_inicio,
-               TIME_FORMAT(hora_fin, '%H:%i:%s') as hora_fin,
+               CAST(hora_inicio AS CHAR) as hora_inicio,
+               CAST(hora_fin AS CHAR) as hora_fin,
                total
         FROM v_turnos_mas_demandados
         LIMIT 10
@@ -352,8 +352,8 @@ def horarios_pico():
     query = """
         SELECT 
             DAYNAME(r.fecha) as dia_semana,
-            TIME_FORMAT(t.hora_inicio, '%H:%i:%s') as hora_inicio,
-            TIME_FORMAT(t.hora_fin, '%H:%i:%s') as hora_fin,
+            CAST(t.hora_inicio AS CHAR) as hora_inicio,
+            CAST(t.hora_fin AS CHAR) as hora_fin,
             COUNT(*) as total_reservas,
             COUNT(DISTINCT r.id_sala) as salas_diferentes
         FROM reserva r
@@ -379,14 +379,16 @@ def prediccion_disponibilidad():
         SELECT 
             s.nombre_sala,
             e.nombre_edificio,
-            TIME_FORMAT(t.hora_inicio, '%H:%i:%s') as hora_inicio,
-            TIME_FORMAT(t.hora_fin, '%H:%i:%s') as hora_fin,
+            CAST(t.hora_inicio AS CHAR) as hora_inicio,
+            CAST(t.hora_fin AS CHAR) as hora_fin,
             COUNT(*) as veces_reservada_historico,
-            ROUND((1 - COUNT(*) / (
+            COALESCE(
+              ROUND((1 - COUNT(*) / NULLIF((
                 SELECT COUNT(DISTINCT fecha) 
                 FROM reserva 
                 WHERE DAYNAME(fecha) = %s
-            )) * 100, 2) as probabilidad_disponibilidad
+              ), 0)) * 100, 2), 100
+            ) as probabilidad_disponibilidad
         FROM sala s
         JOIN edificio e ON s.id_edificio = e.id_edificio
         CROSS JOIN turno t
@@ -397,5 +399,6 @@ def prediccion_disponibilidad():
         ORDER BY probabilidad_disponibilidad DESC, t.hora_inicio
         LIMIT 30
     """
+    # (debug prints removed)
     results = execute_query(query, (dia_semana, dia_semana))
     return jsonify(convert_timedelta_to_string(results))

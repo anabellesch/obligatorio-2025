@@ -82,4 +82,13 @@ export const api = {
     if (!res.ok) throw new Error("Error en la API");
     return res.json();
   },
+
+  
 };
+
+export const getReporte = async (path) => {
+  const res = await fetch(`${API_URL}/reportes/${path}`);
+  if (!res.ok) throw new Error("Error al obtener reporte");
+  return res.json();
+};
+
