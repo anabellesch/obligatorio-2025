@@ -48,9 +48,9 @@ export default function Register() {
 
     try {
       const { confirmPassword, ...dataToSend } = formData;
-      
-      await api.post("/auth/register", dataToSend);
-      
+      // Enviar registro y mostrar respuesta en consola para depuración
+      const resp = await api.post("/auth/register", dataToSend);
+      try { console.debug('Register response (backend):', resp); } catch (e) {}
       // Mostrar mensaje de éxito y redirigir al login
       alert("¡Registro exitoso! Ahora puedes iniciar sesión.");
       navigate("/login");

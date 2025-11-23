@@ -17,6 +17,8 @@ export default function Login() {
 
     try {
       const response = await api.post("/auth/login", { email, password });
+      // Debug: mostrar respuesta del backend en consola
+      try { console.debug('Login response (backend):', response); } catch (e) {}
       
       // Guardar datos del usuario en localStorage
       const userData = {
@@ -27,8 +29,15 @@ export default function Login() {
         email: response.user.email,
         roles_academicos: response.user.roles_academicos
       };
-      localStorage.setItem("user", JSON.stringify(userData));
-      localStorage.setItem("token", response.token);
+      try {
+        localStorage.setItem("user", JSON.stringify(userData));
+        localStorage.setItem("token", response.token);
+        try { console.debug('Saved user and token to localStorage'); } catch (e) {}
+      } catch (errLocal) {
+        console.error('Error saving to localStorage', errLocal);
+        // informar al usuario
+        alert('Error al guardar sesión en el navegador. Revisa la consola.');
+      }
       
       // Redirigir al home
       navigate("/");
