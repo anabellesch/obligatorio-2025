@@ -1,5 +1,5 @@
 from datetime import datetime, time, timedelta, date
-from db import get_conn
+from app.db import get_conn
 
 def hour_int_from_time_str(tstr):
     # espera "HH:MM" o "H:MM"

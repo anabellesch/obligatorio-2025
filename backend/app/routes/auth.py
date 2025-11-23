@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.db import execute_query
+from app.db import execute_query, execute_transaction
 import hashlib
 import secrets
 import mysql.connector
@@ -140,20 +140,20 @@ def register():
         if result_login[0]['count'] > 0:
             return jsonify({"error": "El email ya está registrado"}), 409
         
-        # Crear participante
-        query_participante = """
-            INSERT INTO participante (ci, nombre, apellido, email)
-            VALUES (%s, %s, %s, %s)
-        """
-        execute_query(query_participante, (ci, nombre, apellido, email))
-        
-        # Crear login
+        # Crear participante y login en una sola transacción
+        query_participante = (
+            "INSERT INTO participante (ci, nombre, apellido, email) VALUES (%s, %s, %s, %s)",
+            (ci, nombre, apellido, email)
+        )
+
         password_hash = hash_password(password)
-        query_login = """
-            INSERT INTO login (correo, password_hash, ci_participante, rol_sistema)
-            VALUES (%s, %s, %s, %s)
-        """
-        execute_query(query_login, (email, password_hash, ci, rol_sistema))
+        query_login = (
+            "INSERT INTO login (correo, password_hash, ci_participante, rol_sistema) VALUES (%s, %s, %s, %s)",
+            (email, password_hash, ci, rol_sistema)
+        )
+
+        # Ejecutar ambos inserts en la misma transacción (si falla uno, se hace rollback)
+        execute_transaction([query_participante, query_login])
         
         return jsonify({
             "message": "Usuario registrado exitosamente",

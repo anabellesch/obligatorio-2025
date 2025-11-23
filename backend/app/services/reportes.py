@@ -1,5 +1,5 @@
 # services/reporte_service.py
-from db import get_conn
+from app.db import get_conn
 from services.sanciones import SancionesService
 from datetime import datetime
 

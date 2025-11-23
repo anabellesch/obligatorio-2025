@@ -82,3 +82,31 @@ def execute_many(query, params_list):
 
 def get_conn():
     return get_db_connection()
+
+
+def execute_transaction(queries_with_params):
+    """
+    Ejecuta múltiples queries en la misma transacción.
+
+    queries_with_params: lista de tuplas (query, params)
+    Retorna: lista de resultados de execute() para cada query (solo como referencia)
+    """
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    results = []
+    try:
+        for q, p in queries_with_params:
+            if p:
+                cursor.execute(q, p)
+            else:
+                cursor.execute(q)
+            # Guardar info mínima
+            results.append({"affected_rows": cursor.rowcount, "last_id": cursor.lastrowid})
+        conn.commit()
+        return results
+    except mysql.connector.Error as err:
+        conn.rollback()
+        raise err
+    finally:
+        cursor.close()
+        conn.close()

@@ -1,5 +1,5 @@
 # services/reserva_service.py
-from db import get_conn
+from app.db import get_conn
 from utils import hour_int_from_time_str, validate_hours_between_8_23, week_bounds_for_date, is_docente, is_posgrado
 from services.sanciones import SancionesService
 from datetime import datetime, date, timedelta

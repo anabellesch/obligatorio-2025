@@ -1,5 +1,5 @@
 # services/sala_service.py
-from db import get_conn
+from app.db import get_conn
 
 class SalasService:
 
