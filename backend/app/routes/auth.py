@@ -1,18 +1,37 @@
 from flask import Blueprint, request, jsonify
 from app.db import execute_query, execute_transaction
 import hashlib
-import secrets
+import os
 import mysql.connector
+import jwt
+import datetime
 
 auth_bp = Blueprint('auth', __name__)
+
+JWT_SECRET = os.getenv('JWT_SECRET', 'dev-jwt-secret')
+JWT_ALGORITHM = 'HS256'
+JWT_EXP_HOURS = int(os.getenv('JWT_EXP_HOURS', '8'))
 
 def hash_password(password):
     """Hashea una contraseña usando SHA256"""
     return hashlib.sha256(password.encode()).hexdigest()
 
-def generate_token():
-    """Genera un token aleatorio para la sesión"""
-    return secrets.token_hex(32)
+def generate_jwt(payload: dict):
+    exp = datetime.datetime.utcnow() + datetime.timedelta(hours=JWT_EXP_HOURS)
+    payload_copy = payload.copy()
+    payload_copy['exp'] = exp
+    token = jwt.encode(payload_copy, JWT_SECRET, algorithm=JWT_ALGORITHM)
+    # PyJWT returns str in v2
+    return token
+
+def verify_jwt(token: str):
+    try:
+        data = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        return True, data
+    except jwt.ExpiredSignatureError:
+        return False, {'error': 'Token expirado'}
+    except jwt.InvalidTokenError:
+        return False, {'error': 'Token inválido'}
 
 # POST login
 @auth_bp.route('/login', methods=['POST'])
@@ -31,7 +50,7 @@ def login():
         
         # Buscar usuario por email en la tabla login
         query = """
-            SELECT l.correo, l.ci_participante, l.rol_sistema,
+            SELECT l.correo, l.ci_participante,
                    p.nombre, p.apellido, p.email
             FROM login l
             JOIN participante p ON l.ci_participante = p.ci
@@ -53,8 +72,11 @@ def login():
         if not pass_result or pass_result[0]['password_hash'] != password_hash:
             return jsonify({"error": "Credenciales inválidas"}), 401
         
-        # Generar token de sesión
-        token = generate_token()
+        # Generar JWT de sesión (sin rol)
+        token = generate_jwt({
+            'email': user['email'],
+            'ci': user['ci_participante']
+        })
         
         # Obtener roles académicos del usuario (si tiene)
         query_roles = """
@@ -73,7 +95,6 @@ def login():
                 "nombre": user['nombre'],
                 "apellido": user['apellido'],
                 "email": user['email'],
-                "rol_sistema": user['rol_sistema'],  # 'admin' o 'usuario'
                 "roles_academicos": roles_academicos
             }
         }), 200
@@ -93,7 +114,7 @@ def register():
         "apellido": "...", 
         "email": "...", 
         "password": "...",
-        "rol_sistema": "usuario" | "admin" (opcional, por defecto "usuario")
+        
     }
     """
     try:
@@ -108,11 +129,7 @@ def register():
         apellido = data['apellido']
         email = data['email']
         password = data['password']
-        rol_sistema = data.get('rol_sistema', 'usuario')  # Por defecto: usuario
         
-        # Validar rol_sistema
-        if rol_sistema not in ['admin', 'usuario']:
-            return jsonify({"error": "Rol inválido. Use 'admin' o 'usuario'"}), 400
         
         # Verificar que la contraseña tenga al menos 6 caracteres
         if len(password) < 6:
@@ -148,8 +165,8 @@ def register():
 
         password_hash = hash_password(password)
         query_login = (
-            "INSERT INTO login (correo, password_hash, ci_participante, rol_sistema) VALUES (%s, %s, %s, %s)",
-            (email, password_hash, ci, rol_sistema)
+            "INSERT INTO login (correo, password_hash, ci_participante) VALUES (%s, %s, %s)",
+            (email, password_hash, ci)
         )
 
         # Ejecutar ambos inserts en la misma transacción (si falla uno, se hace rollback)
@@ -161,8 +178,7 @@ def register():
                 "ci": ci,
                 "nombre": nombre,
                 "apellido": apellido,
-                "email": email,
-                "rol_sistema": rol_sistema
+                "email": email
             }
         }), 201
     
@@ -182,14 +198,19 @@ def logout():
 @auth_bp.route('/verify', methods=['GET'])
 def verify():
     """Verifica si un token es válido"""
-    token = request.headers.get('Authorization')
-    
-    if not token:
+    auth = request.headers.get('Authorization')
+    if not auth:
         return jsonify({"valid": False, "error": "Token no proporcionado"}), 401
 
-    # En un sistema real, verificarías el token contra una base de datos
-    # Por ahora, aceptamos cualquier token
-    return jsonify({"valid": True}), 200
+    parts = auth.split()
+    if len(parts) != 2 or parts[0].lower() != 'bearer':
+        return jsonify({"valid": False, "error": "Formato de Authorization inválido"}), 401
+
+    token = parts[1]
+    ok, data = verify_jwt(token)
+    if not ok:
+        return jsonify({"valid": False, "error": data.get('error', 'invalid token')}), 401
+    return jsonify({"valid": True, "payload": data}), 200
 
 # GET información del usuario actual
 @auth_bp.route('/me', methods=['GET'])
@@ -199,15 +220,23 @@ def get_current_user():
     Header: Authorization: Bearer {token}
     """
     try:
-        # En un sistema real, extraerías el user_id del token
-        # Por ahora, esperamos que el frontend envíe el email en el header
-        email = request.headers.get('X-User-Email')
-        
-        if not email:
+        # Ahora verificamos el token Bearer y extraemos el email del payload
+        auth = request.headers.get('Authorization')
+        if not auth:
             return jsonify({"error": "No autorizado"}), 401
-        
+        parts = auth.split()
+        if len(parts) != 2 or parts[0].lower() != 'bearer':
+            return jsonify({"error": "No autorizado"}), 401
+        token = parts[1]
+        ok, payload = verify_jwt(token)
+        if not ok:
+            return jsonify({"error": payload.get('error', 'Token inválido')}), 401
+        email = payload.get('email')
+        if not email:
+            return jsonify({"error": "Email en token ausente"}), 401
+
         query = """
-            SELECT l.correo, l.ci_participante, l.rol_sistema,
+            SELECT l.correo, l.ci_participante,
                    p.nombre, p.apellido, p.email
             FROM login l
             JOIN participante p ON l.ci_participante = p.ci
@@ -224,8 +253,7 @@ def get_current_user():
             "ci": user['ci_participante'],
             "nombre": user['nombre'],
             "apellido": user['apellido'],
-            "email": user['email'],
-            "rol_sistema": user['rol_sistema']
+            "email": user['email']
         }), 200
     
     except Exception as e:

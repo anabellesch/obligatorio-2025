@@ -11,7 +11,7 @@ export default function Register() {
     email: "",
     password: "",
     confirmPassword: "",
-    rol_sistema: "usuario"
+    
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -141,22 +141,7 @@ export default function Register() {
             />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="rol_sistema">Tipo de Usuario</label>
-            <select
-              id="rol_sistema"
-              name="rol_sistema"
-              value={formData.rol_sistema}
-              onChange={handleChange}
-              disabled={loading}
-            >
-              <option value="usuario">👤 Usuario (Soporte)</option>
-              <option value="admin">👑 Administrador</option>
-            </select>
-            <small>
-              Los administradores tienen acceso completo al sistema
-            </small>
-          </div>
+          
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
             <div className="form-group">

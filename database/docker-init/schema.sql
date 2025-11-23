@@ -101,10 +101,10 @@ CREATE TABLE sancion_participante (
 );
 
 -- Login separado (referencia a participante por ci)
+-- Login separado (referencia a participante por ci)
 CREATE TABLE login (
   correo VARCHAR(150) PRIMARY KEY,
   password_hash VARCHAR(255) NOT NULL,
   ci_participante VARCHAR(20),
-  rol_sistema ENUM('admin','usuario') DEFAULT 'usuario',
   FOREIGN KEY (ci_participante) REFERENCES participante(ci)
 );

@@ -25,10 +25,8 @@ export default function Login() {
         nombre: response.user.nombre,
         apellido: response.user.apellido,
         email: response.user.email,
-        rol_sistema: response.user.rol_sistema,
         roles_academicos: response.user.roles_academicos
       };
-      
       localStorage.setItem("user", JSON.stringify(userData));
       localStorage.setItem("token", response.token);
       

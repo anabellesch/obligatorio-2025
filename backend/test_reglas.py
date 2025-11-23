@@ -1,9 +1,3 @@
-#!/usr/bin/env python3
-"""
-Script de testing para verificar todas las reglas de negocio del sistema
-Ejecutar: python test_reglas_negocio.py
-"""
-
 import requests
 import json
 from datetime import date, timedelta

@@ -44,6 +44,6 @@ VALUES ('1000001', 1, 'alumno'),
 
 
 -- Logins (passwords se guardan hasheadas)
-INSERT INTO login (correo, password_hash, rol_sistema, ci_participante)
-VALUES ('ana.gomez@example.com', 'PENDING_HASH', 'admin', '1000001'),
-       ('juan.perez@example.com', 'PENDING_HASH', 'usuario', '1000002');
+INSERT INTO login (correo, password_hash, ci_participante)
+VALUES ('ana.gomez@example.com', 'PENDING_HASH', '1000001'),
+       ('juan.perez@example.com', 'PENDING_HASH', '1000002');
