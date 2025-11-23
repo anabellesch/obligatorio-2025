@@ -1,7 +1,59 @@
-# bd-2025
+Sistema de Gestión de Reserva de Salas de Estudio — Introducción
 
-PARA CORRER EL PROYECTO:
+Este proyecto implementa un sistema completo para la gestión de reservas de salas de estudio dentro del ámbito universitario. Permite administrar salas, participantes, reservas, asistencias, sanciones y generar reportes analíticos, cumpliendo con los requisitos del Trabajo Obligatorio del curso Base de Datos 1 (UCU — 2025).
 
-1. docker compose up
-2. cd frontend
-3. npm run dev
+La aplicación está construida con:
+
+Backend en Python (sin ORM, siguiendo las restricciones del obligatorio).
+
+Base de datos MySQL.
+
+Frontend moderno (JavaScript).
+
+Docker para facilitar el despliegue en cualquier entorno.
+
+A continuación se detallan los pasos necesarios para ejecutar el proyecto localmente.
+
+Cómo iniciar el proyecto
+
+Antes de empezar, asegurate de tener instalados:
+
+Docker
+
+Docker Compose
+
+Node.js + npm
+
+1. Construir los contenedores
+docker compose build
+
+2. Levantar los servicios
+docker compose up
+
+
+Esto iniciará:
+
+El backend en Python
+
+La base de datos MySQL
+
+Otros servicios definidos en docker-compose.yml
+
+3. Iniciar el frontend
+
+Una vez iniciado Docker, accedé al directorio del frontend:
+
+cd frontend
+
+
+Instalá las dependencias:
+
+npm install
+
+
+Ejecutá el servidor de desarrollo:
+
+npm run dev
+
+
+El sistema quedará disponible en tu navegador en el puerto indicado por el frontend (generalmente http://localhost:5173 o similar).
