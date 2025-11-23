@@ -24,10 +24,10 @@ Docker Compose
 
 Node.js + npm
 
-1. Construir los contenedores
-docker compose build
+1. Construir los contenedores con: 
+docker compose build --no-cache
 
-2. Levantar los servicios
+2. Levantar los servicios con: 
 docker compose up
 
 
