@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
+
 import UbicacionSalas from "./pages/UbicacionSalas";
 import SalasDisponibles from "./pages/SalasDisponibles";
 import Reglamentacion from "./pages/ReglamentacionReservas";
@@ -11,32 +10,33 @@ import Dashboard from "./pages/Dashboard";
 import AdminParticipantes from "./pages/Admin/AdminParticipantes";
 import AdminReservas from "./pages/Admin/AdminReservas";
 import AdminSalas from "./pages/Admin/AdminSalas";
-import ProtectedRoute from "./components/ProtectedRoute";
+
 
 
 import "./App.css";
+import { API_URL } from './services/api';
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+ 
+        <Route path="/" element={<Home />} />
+        <Route path="/ubicacion" element={<UbicacionSalas />} />
+        <Route path="/salas" element={<SalasDisponibles />} />
+        <Route path="/reservas" element={<Reservas />} />
+        <Route path="/reglamentacion" element={<Reglamentacion />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/asistencia" element={<AsistenciaRemota />} />
 
-        {/* Protected routes - require authentication */}
-        <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-        <Route path="/ubicacion" element={<ProtectedRoute><UbicacionSalas /></ProtectedRoute>} />
-        <Route path="/salas" element={<ProtectedRoute><SalasDisponibles /></ProtectedRoute>} />
-        <Route path="/reservas" element={<ProtectedRoute><Reservas /></ProtectedRoute>} />
-        <Route path="/reglamentacion" element={<ProtectedRoute><Reglamentacion /></ProtectedRoute>} />
-        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-        <Route path="/asistencia" element={<ProtectedRoute><AsistenciaRemota /></ProtectedRoute>} />
-        
-        {/* Rutas de administración */}
-        <Route path="/admin/participantes" element={<ProtectedRoute><AdminParticipantes /></ProtectedRoute>} />
-        <Route path="/admin/reservas" element={<ProtectedRoute><AdminReservas /></ProtectedRoute>} />
-        <Route path="/admin/salas" element={<ProtectedRoute><AdminSalas /></ProtectedRoute>} />
+ 
+        <Route path="/admin/participantes" element={<AdminParticipantes />} />
+        <Route path="/admin/reservas" element={<AdminReservas />} />
+        <Route path="/admin/salas" element={<AdminSalas />} />
       </Routes>
+      <div style={{position: 'fixed', right: 8, bottom: 8, padding: '6px 10px', background: 'rgba(0,0,0,0.6)', color: '#fff', fontSize: 12, borderRadius: 6, zIndex: 9999}}>
+        API: {API_URL}
+      </div>
     </Router>
   );
 }

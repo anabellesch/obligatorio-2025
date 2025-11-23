@@ -8,7 +8,7 @@ function Navbar() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Cargar usuario del localStorage
+    
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
@@ -19,13 +19,8 @@ function Navbar() {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     setUser(null);
-    navigate("/login");
+    navigate("/");
   };
-
-  // No mostrar navbar en la página de login
-  if (location.pathname === "/login") {
-    return null;
-  }
 
   return (
     <nav className="navbar">
@@ -40,22 +35,7 @@ function Navbar() {
         </div>
       </div>
 
-      <div className="navbar-right">
-        {user ? (
-          <div className="user-menu">
-            <span className="user-name">
-              👤 {user.nombre} {user.apellido}
-            </span>
-            <button className="btn-logout" onClick={handleLogout}>
-              Cerrar Sesión
-            </button>
-          </div>
-        ) : (
-          <button className="btn-login-navbar" onClick={() => navigate("/login")}>
-            Iniciar Sesión
-          </button>
-        )}
-      </div>
+      
     </nav>
   );
 }

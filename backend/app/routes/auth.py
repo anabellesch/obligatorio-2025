@@ -1,3 +1,5 @@
+# OBSOLETO ???? NO LOGIN
+
 from flask import Blueprint, request, jsonify
 from app.db import execute_query, execute_transaction
 import hashlib
@@ -21,7 +23,7 @@ def generate_jwt(payload: dict):
     payload_copy = payload.copy()
     payload_copy['exp'] = exp
     token = jwt.encode(payload_copy, JWT_SECRET, algorithm=JWT_ALGORITHM)
-    # PyJWT returns str in v2
+
     return token
 
 def verify_jwt(token: str):
@@ -42,6 +44,11 @@ def login():
     """
     try:
         data = request.json
+ 
+        try:
+            print(f"[auth.login] request from {request.remote_addr} - email={data.get('email')}")
+        except Exception:
+            pass
         email = data.get('email')
         password = data.get('password')
         
@@ -119,6 +126,11 @@ def register():
     """
     try:
         data = request.json
+
+        try:
+            print(f"[auth.register] request from {request.remote_addr} - ci={data.get('ci')} email={data.get('email')}")
+        except Exception:
+            pass
         
         required = ['ci', 'nombre', 'apellido', 'email', 'password']
         if not all(field in data for field in required):

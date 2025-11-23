@@ -138,7 +138,7 @@ export default function Dashboard() {
             <section>
                 <h2 className="text-xl font-semibold mb-2">Ocupación por edificio</h2>
                 {
-                    // If there is no meaningful data (all zeros or empty), show a placeholder message
+                    
                     (() => {
                         const totalPerc = ocupacionEdificios.reduce((s, it) => s + (Number(it.porcentaje) || 0), 0);
                         if (!ocupacionEdificios.length || totalPerc === 0) {

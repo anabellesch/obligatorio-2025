@@ -4,8 +4,8 @@
   font-weight: 400;
 
   color-scheme: light;
-  color: #0b2a66; /* azul oscuro para todo el texto */
-  background-color: #ffffff; /* fondo blanco */
+  color: #0b2a66; 
+  background-color: #ffffff;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -24,7 +24,7 @@ a:hover {
 
 body {
   margin: 0;
-  /* Quitar el centrado global para que la navbar quede en su posición natural */
+
   min-width: 320px;
   min-height: 100vh;
 }
@@ -42,7 +42,7 @@ button {
   font-weight: 500;
   font-family: inherit;
   background-color: #1a1a1a;
-  color: #ffffff; /* texto blanco sobre fondo oscuro */
+  color: #ffffff; 
   cursor: pointer;
   transition: border-color 0.25s;
 }
@@ -56,7 +56,7 @@ button:focus-visible {
 
 @media (prefers-color-scheme: light) {
   :root {
-    /* keep light settings consistent */
+   
     color: #0b2a66;
     background-color: #ffffff;
   }
@@ -65,16 +65,16 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
-    color: #0b2a66; /* texto azul oscuro sobre fondo claro */
+    color: #0b2a66; 
   }
 }
 
-/* Make SVG (Recharts) text use the same dark-blue color */
+
 svg text {
   fill: #0b2a66 !important;
 }
 
-/* Ensure body inherits the root background and text color */
+
 body {
   background-color: inherit;
   color: inherit;

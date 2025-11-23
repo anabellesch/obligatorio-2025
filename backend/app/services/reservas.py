@@ -8,20 +8,12 @@ class ReservaService:
 
     @staticmethod
     def crear(ci_solicitante, id_sala, fecha_str, hora_inicio_str, hora_fin_str, participantes_list):
-        """
-        - ci_solicitante: quien solicita (string CI)
-        - id_sala: int
-        - fecha_str: "YYYY-MM-DD"
-        - hora_inicio_str: "HH:MM"
-        - hora_fin_str: "HH:MM"
-        - participantes_list: lista de CI de participantes (incluye solicitante si corresponde)
-        """
-        # parseo
+        
         fecha = datetime.strptime(fecha_str, "%Y-%m-%d").date()
         h_start = hour_int_from_time_str(hora_inicio_str)
         h_end = hour_int_from_time_str(hora_fin_str)
         validate_hours_between_8_23(h_start, h_end)
-        horas_a_reservar = h_end - h_start  # número de bloques
+        horas_a_reservar = h_end - h_start  
 
         # conexiones
         conn = get_conn()
@@ -38,7 +30,7 @@ class ReservaService:
                 raise ValueError("Cantidad de participantes excede la capacidad de la sala")
 
             # obtener tipo_sala para excepciones
-            tipo_sala = sala['tipo_sala']  # 'libre', 'posgrado', 'docente'
+            tipo_sala = sala['tipo_sala']  
 
             # regla: solicitante o participantes sancionados no pueden reservar
             for ci in participantes_list:
@@ -49,13 +41,6 @@ class ReservaService:
                 if cur.fetchone():
                     raise ValueError(f"El participante {ci} tiene sanción activa")
 
-            # Validaciones por bloque: para cada turno (hora) debemos:
-            #  - obtener id_turno
-            #  - verificar disponibilidad de la sala para ese turno
-            #  - verificar que ningún participante esté participando en otra reserva para ese mismo dia+turno
-            #  - verificar límite de 2 horas diarias por participante (salvo excepciones)
-            #  - verificar límite de 3 reservas activas en la semana por participante (salvo excepciones)
-            # Precalculo: para cada participante, su rol
             roles_cache = {}
             for ci in participantes_list:
                 roles_cache[ci] = {
@@ -112,7 +97,7 @@ class ReservaService:
                             WHERE r.fecha = %s AND r.solicitante_ci = %s AND r.estado = 'activa' AND s.tipo_sala = 'libre'
                         """, (fecha, ci))
                         cnt_today = cur.fetchone()['cnt'] or 0
-                        # Note: estamos contando por solicitante_ci; si el participante no es solicitante chequeamos participación
+                        
                         # también chequeamos participación en reservas donde participa (no sólo las solicitadas)
                         cur.execute("""
                             SELECT COUNT(*) AS cntp

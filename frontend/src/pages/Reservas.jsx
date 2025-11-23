@@ -126,13 +126,12 @@ export default function Reservas() {
                           const [y, m, day] = d.split("-");
                           return new Date(parseInt(y), parseInt(m) - 1, parseInt(day)).toLocaleDateString('es-UY');
                         }
-                        // fallback (datetime string like 'Tue, 25 Nov 2025 00:00:00 GMT')
-                        // Use UTC date parts to avoid timezone shifts that show the previous day
+
                         const dt = new Date(d);
                         const y2 = dt.getUTCFullYear();
                         const m2 = dt.getUTCMonth();
                         const day2 = dt.getUTCDate();
-                        // Also show raw value for debugging (temporary)
+
                         const formatted = new Date(y2, m2, day2).toLocaleDateString('es-UY');
                         return (
                           <div>

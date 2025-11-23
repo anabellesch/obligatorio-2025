@@ -15,17 +15,7 @@ def get_db_connection():
     )
 
 def execute_query(query, params=None):
-    """
-    Ejecuta una consulta SQL y retorna los resultados
     
-    Args:
-        query: La consulta SQL a ejecutar
-        params: Tupla de parámetros para la consulta (opcional)
-    
-    Returns:
-        Lista de diccionarios con los resultados para SELECT
-        Diccionario con affected_rows y last_id para INSERT/UPDATE/DELETE
-    """
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     
@@ -53,16 +43,7 @@ def execute_query(query, params=None):
         conn.close()
 
 def execute_many(query, params_list):
-    """
-    Ejecuta múltiples inserts/updates en una transacción
-    
-    Args:
-        query: La consulta SQL a ejecutar
-        params_list: Lista de tuplas con parámetros
-    
-    Returns:
-        Número de filas afectadas
-    """
+   
     conn = get_db_connection()
     cursor = conn.cursor()
     
@@ -85,12 +66,7 @@ def get_conn():
 
 
 def execute_transaction(queries_with_params):
-    """
-    Ejecuta múltiples queries en la misma transacción.
-
-    queries_with_params: lista de tuplas (query, params)
-    Retorna: lista de resultados de execute() para cada query (solo como referencia)
-    """
+  
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     results = []

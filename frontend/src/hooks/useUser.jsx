@@ -12,8 +12,9 @@ export function useUser() {
     localStorage.removeItem("user");
     setUser(null);
     // opcional: redirect
-    window.location.href = "/login";
+    window.location.href = "/";
   };
 
   return { user, setUser, logout };
 }
+

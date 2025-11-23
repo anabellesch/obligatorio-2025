@@ -1,4 +1,3 @@
-# services/sala_service.py
 from app.db import get_conn
 
 class SalasService:
@@ -27,9 +26,7 @@ class SalasService:
 
     @staticmethod
     def verificar_disponibilidad(id_sala, fecha, id_turno):
-        """
-        Devuelve True si no existe reserva en la sala para la fecha y turno indicado.
-        """
+
         conn = get_conn()
         cur = conn.cursor(dictionary=True)
         cur.execute("""

@@ -1,17 +1,17 @@
-export const API_URL = "http://localhost:5000/api";
+const defaultHost = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
+export const API_URL = import.meta.env.VITE_API_URL || `http://${defaultHost}:5000/api`;
 
 function buildUrl(endpoint) {
-  // Ensure no duplicate /api prefix when joining API_URL and endpoint
+
   const base = API_URL.replace(/\/$/, "");
   let ep = endpoint || "";
   if (ep.startsWith("/api/")) ep = ep.replace(/^\/api/, "");
-  // If endpoint is a single path segment like '/participantes', add trailing slash
-  // to avoid Flask redirect that breaks CORS preflight. Don't modify multi-segment paths.
+
   if (/^\/[^\/]+$/.test(ep) && !ep.endsWith('/')) {
     ep = ep + '/';
   }
   const url = `${base}${ep}`;
-  // Debug: log built URLs in development
+
   if (process.env.NODE_ENV !== 'production') {
     try { console.debug(`[api] buildUrl -> ${url}`); } catch (e) {}
   }
@@ -28,7 +28,7 @@ export const api = {
         const body = await res.json();
         err.message = body.error || body.message || err.message;
       } catch (e) {
-        /* ignore */
+
       }
       throw err;
     }
@@ -39,7 +39,7 @@ export const api = {
     const url = buildUrl(endpoint);
     let res;
     try {
-      // Debug: log outgoing request in dev
+
       if (process.env.NODE_ENV !== 'production') {
         try { console.debug('[api] POST', url, data); } catch (e) {}
       }
@@ -49,7 +49,7 @@ export const api = {
         body: JSON.stringify(data),
       });
     } catch (err) {
-      // Network-level error (server down, CORS, DNS, etc.)
+  
       const message = `Network error connecting to ${url}: ${err.message}`;
       try { console.error('[api] Network error', { url, err }); } catch (e) {}
       throw new Error(message);

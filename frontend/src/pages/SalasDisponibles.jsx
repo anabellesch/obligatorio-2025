@@ -87,7 +87,7 @@ export default function SalasDisponibles() {
 
   const formatTime = (timeStr) => {
     if (!timeStr) return "";
-    return timeStr.substring(0, 5); // HH:MM
+    return timeStr.substring(0, 5); 
   };
 
   return (

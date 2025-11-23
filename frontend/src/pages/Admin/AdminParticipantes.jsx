@@ -3,7 +3,7 @@ import { api } from "../../services/api";
 
 export default function AdminParticipantes() {
   const [lista, setLista] = useState([]);
-  const [filter, setFilter] = useState('reservantes'); // 'reservantes' | 'all'
+  const [filter, setFilter] = useState('reservantes'); 
   const [form, setForm] = useState({ci:'', nombre:'', apellido:'', email:''});
 
   const fetchAll = async () => {
@@ -18,7 +18,7 @@ export default function AdminParticipantes() {
 
   const handleCreate = async () => {
     try {
-      // Debug: show payload and built URL in console to diagnose 'Failed to fetch'
+      
       try { console.debug('[AdminParticipantes] creating', form); } catch (e) {}
       await api.post("/participantes/", form);
       setForm({ci:'', nombre:'', apellido:'', email:''});
